@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>asiaLAKAY — Building technology that serves culture and strengthens community</title>
+    <title>ASIA LAKAY -- Creative Technologist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js"></script>
     <style>
         :root {
-            /* Core Colors */
-            --obsidian-black: #0E0E10;
-            --matte-navy: #0A143C;
-            --gold-crown: #D4A72C;
-            --pale-sand: #EFE7D8;
-            --deep-teal: #00B7B3;
-            --soft-crimson: #E65972;
-            --ink-gray: #1F2023;
-            
-            /* Gradients */
-            --hero-gradient: linear-gradient(135deg, var(--obsidian-black) 0%, var(--matte-navy) 100%);
-            --card-gradient: linear-gradient(145deg, var(--ink-gray) 0%, var(--matte-navy) 100%);
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00c8;
+            --neon-accent: #00ff9d;
+            --dark-bg: #0a0a0f;
+            --darker-bg: #050508;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
         * {
@@ -27,555 +23,681 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--obsidian-black);
-            color: var(--pale-sand);
-            line-height: 1.6;
-            font-size: 16px;
+            font-family: 'SF Mono', 'JetBrains Mono', monospace;
+            background: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
         }
 
-        /* Cultural Typography */
-        h1, h2, h3, h4 {
-            font-family: 'Space Grotesk', 'Inter', sans-serif;
-            font-weight: 600;
-            color: var(--gold-crown);
-            line-height: 1.2;
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
         }
 
-        h1 {
-            font-size: clamp(2.5rem, 5vw, 4rem);
+        .cursor-follower {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
         }
 
-        h2 {
-            font-size: clamp(2rem, 4vw, 3rem);
-            margin-bottom: 2rem;
-        }
-
-        /* Cultural Pattern Background */
-        .cultural-bg {
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(212, 167, 44, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(0, 183, 179, 0.1) 0%, transparent 50%),
-                var(--hero-gradient);
-        }
-
-        /* Card System */
-        .cultural-card {
-            background: var(--card-gradient);
-            border: 1px solid var(--matte-navy);
-            border-radius: 12px;
-            padding: 2rem;
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
         }
 
-        .cultural-card::before {
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .glitch {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 
+                0.05em 0 0 var(--neon-primary),
+                -0.05em -0.025em 0 var(--neon-secondary),
+                -0.025em 0.05em 0 var(--neon-accent);
+            animation: glitch 2s infinite;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.5s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+            opacity: 0.8;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.5s infinite;
+            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+            opacity: 0.8;
+        }
+
+        @keyframes glitch {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% {
+                text-shadow: 
+                    0.05em 0 0 var(--neon-primary),
+                    -0.05em -0.025em 0 var(--neon-secondary),
+                    -0.025em 0.05em 0 var(--neon-accent);
+            }
+            15%, 49% {
+                text-shadow: 
+                    -0.05em -0.025em 0 var(--neon-primary),
+                    0.025em 0.025em 0 var(--neon-secondary),
+                    -0.05em -0.05em 0 var(--neon-accent);
+            }
+            50%, 99% {
+                text-shadow: 
+                    0.025em 0.05em 0 var(--neon-primary),
+                    0.05em 0 0 var(--neon-secondary),
+                    0 -0.05em 0 var(--neon-accent);
+            }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            margin: 2rem 0;
+            opacity: 0.8;
+            position: relative;
+        }
+
+        .tagline::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-primary), transparent);
+        }
+
+        /* Holographic Sections */
+        section {
+            position: relative;
+            margin: 10rem 0;
+            padding: 4rem 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            border-radius: 0;
+            clip-path: polygon(
+                0 0, calc(100% - 40px) 0, 100% 40px,
+                100% 100%, 40px 100%, 0 calc(100% - 40px)
+            );
+        }
+
+        section::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(0, 243, 255, 0.1) 50%,
+                transparent 100%
+            );
+            z-index: -1;
+            animation: hologram 4s infinite;
+        }
+
+        @keyframes hologram {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
             height: 3px;
-            background: linear-gradient(90deg, var(--gold-crown), var(--deep-teal));
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
         }
 
-        .cultural-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--gold-crown);
-            box-shadow: 0 10px 30px rgba(212, 167, 44, 0.1);
-        }
-
-        /* Button System */
-        .btn-primary {
-            background: var(--deep-teal);
-            color: var(--obsidian-black);
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            min-height: 44px;
-            cursor: pointer;
-        }
-
-        .btn-primary:hover {
-            background: var(--gold-crown);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            color: var(--gold-crown);
-            border: 2px solid var(--gold-crown);
-            padding: 1rem 2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            min-height: 44px;
-            cursor: pointer;
-        }
-
-        .btn-secondary:hover {
-            background: var(--gold-crown);
-            color: var(--obsidian-black);
-        }
-
-        /* Layout Utilities */
-        .min-h-screen {
-            min-height: 100vh;
-        }
-
-        .flex {
-            display: flex;
-        }
-
-        .items-center {
-            align-items: center;
-        }
-
-        .justify-center {
-            justify-content: center;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mx-auto {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .max-w-4xl {
-            max-width: 64rem;
-        }
-
-        .max-w-6xl {
-            max-width: 72rem;
-        }
-
-        .max-w-2xl {
-            max-width: 32rem;
-        }
-
-        .p-4 {
-            padding: 1rem;
-        }
-
-        .py-20 {
-            padding-top: 5rem;
-            padding-bottom: 5rem;
-        }
-
-        .px-4 {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-
-        .mb-4 {
-            margin-bottom: 1rem;
-        }
-
-        .mb-6 {
-            margin-bottom: 1.5rem;
-        }
-
-        .mb-8 {
-            margin-bottom: 2rem;
-        }
-
-        .mb-16 {
-            margin-bottom: 4rem;
-        }
-
-        .mt-8 {
+        /* Cyber Grid */
+        .cyber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
             margin-top: 2rem;
         }
 
-        .mt-16 {
-            margin-top: 4rem;
-        }
-
-        .space-x-4 > * + * {
-            margin-left: 1rem;
-        }
-
-        .gap-4 {
-            gap: 1rem;
-        }
-
-        .gap-6 {
-            gap: 1.5rem;
-        }
-
-        .grid {
-            display: grid;
-        }
-
-        .md\\:grid-cols-2 {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .lg\\:grid-cols-3 {
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .justify-center {
-            justify-content: center;
-        }
-
-        .flex-wrap {
-            flex-wrap: wrap;
-        }
-
-        .inline-flex {
-            display: inline-flex;
-        }
-
-        .opacity-40 {
-            opacity: 0.4;
-        }
-
-        .opacity-70 {
-            opacity: 0.7;
-        }
-
-        .opacity-90 {
-            opacity: 0.9;
-        }
-
-        .text-xl {
-            font-size: 1.25rem;
-        }
-
-        .text-2xl {
-            font-size: 1.5rem;
-        }
-
-        .text-3xl {
-            font-size: 1.875rem;
-        }
-
-        .text-lg {
-            font-size: 1.125rem;
-        }
-
-        .leading-relaxed {
-            line-height: 1.625;
-        }
-
-        .rounded-full {
-            border-radius: 9999px;
-        }
-
-        .border-2 {
-            border-width: 2px;
-        }
-
-        .border-t {
-            border-top-width: 1px;
-        }
-
-        .border-matte-navy {
-            border-color: var(--matte-navy);
-        }
-
-        .border-gold-crown {
-            border-color: var(--gold-crown);
-        }
-
-        .w-20 {
-            width: 5rem;
-        }
-
-        .h-20 {
-            height: 5rem;
-        }
-
-        .w-2 {
-            width: 0.5rem;
-        }
-
-        .h-2 {
-            height: 0.5rem;
-        }
-
-        .group:hover .group-hover\\:text-deep-teal {
-            color: var(--deep-teal);
-        }
-
-        .transition-colors {
-            transition: color 0.3s ease;
-        }
-
-        .transition-all {
+        .cyber-card {
+            background: rgba(10, 10, 20, 0.8);
+            padding: 2rem;
+            border: 1px solid var(--neon-primary);
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
         }
 
-        /* Animation for cultural dots */
-        @keyframes pulse {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 1; }
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-primary), var(--neon-secondary), var(--neon-accent));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .animate-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .cyber-card:hover::before {
+            opacity: 1;
+        }
+
+        .cyber-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 0 20px var(--neon-primary),
+                0 0 40px var(--neon-secondary);
+        }
+
+        /* Terminal Style Lists */
+        .terminal-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .terminal-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .terminal-list li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--neon-accent);
+            font-weight: bold;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .cyber-input {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px var(--neon-primary);
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 2px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 1rem 2rem;
+            font-family: inherit;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            background: var(--neon-primary);
+            color: var(--dark-bg);
+            box-shadow: 0 0 30px var(--neon-primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Three.js Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Matrix Rain */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Neural Network */
+        #neural-network {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .md\\:grid-cols-2 {
-                grid-template-columns: 1fr;
+            section {
+                margin: 5rem 0;
+                padding: 2rem 1rem;
             }
             
-            .lg\\:grid-cols-3 {
+            .cyber-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .md\\:text-2xl {
-                font-size: 1.25rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="cultural-bg min-h-screen flex items-center justify-center p-4">
-        <div class="max-w-4xl mx-auto text-center">
-            <!-- Cultural Symbol/Logo -->
-            <div class="mb-8">
-                <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-gold-crown flex items-center justify-center">
-                    <span class="text-gold-crown text-2xl">⚡</span>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Three.js Canvas -->
+    <div id="three-canvas"></div>
+
+    <!-- Matrix Rain -->
+    <canvas id="matrix"></canvas>
+
+    <!-- Neural Network -->
+    <div id="neural-network"></div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="glitch" data-text="ASIA LAKAY">ASIA LAKAY</h1>
+                <p class="tagline">Creative Technologist • AI Systems Builder • Digital Architect</p>
+                <div class="cyber-button">Initiate Connection</div>
+            </div>
+        </header>
+
+        <!-- What I Build -->
+        <section id="capabilities">
+            <h2>System Capabilities</h2>
+            <div class="cyber-grid">
+                <div class="cyber-card">
+                    <h3>Neural Networks</h3>
+                    <ul class="terminal-list">
+                        <li>AI Agent Architectures</li>
+                        <li>Machine Learning Pipelines</li>
+                        <li>Predictive Systems</li>
+                        <li>Automation Clusters</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3>Digital Ecosystems</h3>
+                    <ul class="terminal-list">
+                        <li>Cloudflare Edge Networks</li>
+                        <li>Distributed Systems</li>
+                        <li>API Mesh Architectures</li>
+                        <li>Progressive Web Apps</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3>Creative Systems</h3>
+                    <ul class="terminal-list">
+                        <li>Generative Interfaces</li>
+                        <li>Interactive Experiences</li>
+                        <li>Brand Ecosystems</li>
+                        <li>Digital Narratives</li>
+                    </ul>
                 </div>
             </div>
+        </section>
 
-            <h1 class="mb-6">asiaLAKAY</h1>
-            
-            <div class="max-w-2xl mx-auto">
-                <p class="text-xl md:text-2xl text-pale-sand mb-8 leading-relaxed">
-                    Building technology that serves <span style="color: var(--gold-crown)">culture</span> and 
-                    strengthens <span style="color: var(--deep-teal)">community</span>.
-                </p>
-
-                <p class="text-lg text-pale-sand opacity-90 mb-8 leading-relaxed">
-                    I design systems that make it easier for people to create, organize, and build power together — 
-                    blending engineering with storytelling, art, and real-world impact.
-                </p>
-
-                <div class="flex gap-4 justify-center flex-wrap">
-                    <a href="#work" class="btn-primary">
-                        See the Work
-                    </a>
-                    <a href="#contact" class="btn-secondary">
-                        Build With Me
-                    </a>
+        <!-- Projects -->
+        <section id="operations">
+            <h2>Active Operations</h2>
+            <div class="cyber-grid">
+                <div class="cyber-card">
+                    <h3>Project: DEEDS</h3>
+                    <p>Full-stack platform on Cloudflare Edge. Real-time data synchronization across global network nodes.</p>
+                    <div class="status">STATUS: OPERATIONAL</div>
+                </div>
+                <div class="cyber-card">
+                    <h3>Project: ARKHAM</h3>
+                    <p>Rapid-cycle MVP architecture. 10-day deployment cycles with automated CI/CD pipelines.</p>
+                    <div class="status">STATUS: ITERATING</div>
+                </div>
+                <div class="cyber-card">
+                    <h3>Project: NEXUS</h3>
+                    <p>AI research assistant with legal data parsing. Autonomous analysis and summarization protocols.</p>
+                    <div class="status">STATUS: BETA</div>
                 </div>
             </div>
+        </section>
 
-            <!-- Cultural Pattern Decoration -->
-            <div class="mt-16 opacity-40">
-                <div class="flex justify-center space-x-4">
-                    <div class="w-2 h-2 rounded-full bg-gold-crown animate-pulse" style="animation-delay: 0s"></div>
-                    <div class="w-2 h-2 rounded-full bg-gold-crown animate-pulse" style="animation-delay: 0.2s"></div>
-                    <div class="w-2 h-2 rounded-full bg-gold-crown animate-pulse" style="animation-delay: 0.4s"></div>
-                    <div class="w-2 h-2 rounded-full bg-gold-crown animate-pulse" style="animation-delay: 0.6s"></div>
-                    <div class="w-2 h-2 rounded-full bg-gold-crown animate-pulse" style="animation-delay: 0.8s"></div>
+        <!-- Contact -->
+        <section id="contact">
+            <h2>Establish Connection</h2>
+            <form class="contact-form">
+                <div class="input-group">
+                    <input type="text" class="cyber-input" placeholder="IDENTIFICATION" required>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- What I Build Section -->
-    <section id="work" class="py-20 px-4">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-center mb-16">What I Build</h2>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- DEEDS -->
-                <div class="cultural-card group">
-                    <div class="text-3xl mb-4">📖</div>
-                    <h3 class="mb-3 text-gold-crown group-hover:text-deep-teal transition-colors">
-                        DEEDS — Social Impact Ledger
-                    </h3>
-                    <p class="text-pale-sand opacity-90 mb-4">
-                        A community-driven platform that tracks, verifies, and celebrates real acts of care and service.
-                    </p>
-                    <a href="/deeds" class="inline-flex items-center text-deep-teal hover:text-gold-crown transition-colors font-semibold">
-                        Learn more →
-                    </a>
+                <div class="input-group">
+                    <input type="email" class="cyber-input" placeholder="COMMUNICATION PROTOCOL" required>
                 </div>
-
-                <!-- SOLAR ROOTS -->
-                <div class="cultural-card group">
-                    <div class="text-3xl mb-4">☀️</div>
-                    <h3 class="mb-3 text-gold-crown group-hover:text-deep-teal transition-colors">
-                        SOLAR ROOTS — Community Power Systems
-                    </h3>
-                    <p class="text-pale-sand opacity-90 mb-4">
-                        A circular-economy blueprint for Black-led clean energy, cooperative ownership, and economic survival.
-                    </p>
-                    <a href="/solar-roots" class="inline-flex items-center text-deep-teal hover:text-gold-crown transition-colors font-semibold">
-                        Learn more →
-                    </a>
+                <div class="input-group">
+                    <textarea class="cyber-input" rows="5" placeholder="MISSION PARAMETERS" required></textarea>
                 </div>
-
-                <!-- BRIDGE ACTION NETWORK -->
-                <div class="cultural-card group">
-                    <div class="text-3xl mb-4">🌉</div>
-                    <h3 class="mb-3 text-gold-crown group-hover:text-deep-teal transition-colors">
-                        BRIDGE ACTION NETWORK — Digital Organizing Infrastructure
-                    </h3>
-                    <p class="text-pale-sand opacity-90 mb-4">
-                        Tools, templates, and media systems that help people organize, stay informed, and build real power.
-                    </p>
-                    <a href="/bridge-action" class="inline-flex items-center text-deep-teal hover:text-gold-crown transition-colors font-semibold">
-                        Learn more →
-                    </a>
-                </div>
-
-                <!-- NEXUS -->
-                <div class="cultural-card group">
-                    <div class="text-3xl mb-4">🔍</div>
-                    <h3 class="mb-3 text-gold-crown group-hover:text-deep-teal transition-colors">
-                        NEXUS — AI Research & Intelligence Engine
-                    </h3>
-                    <p class="text-pale-sand opacity-90 mb-4">
-                        A lightweight research assistant that analyzes policy, media, and legal shifts in real time using autonomous workflows.
-                    </p>
-                    <a href="/nexus" class="inline-flex items-center text-deep-teal hover:text-gold-crown transition-colors font-semibold">
-                        Learn more →
-                    </a>
-                </div>
-
-                <!-- asiaLAKAY Studios -->
-                <div class="cultural-card group">
-                    <div class="text-3xl mb-4">🎭</div>
-                    <h3 class="mb-3 text-gold-crown group-hover:text-deep-teal transition-colors">
-                        asiaLAKAY Studios — Culture, Movement, and Digital Storytelling
-                    </h3>
-                    <p class="text-pale-sand opacity-90 mb-4">
-                        A creative lab blending dance, music, and emerging technology to build immersive experiences and uplift Black creativity.
-                    </p>
-                    <a href="/studio" class="inline-flex items-center text-deep-teal hover:text-gold-crown transition-colors font-semibold">
-                        Learn more →
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Beyond Tech Section -->
-    <section class="py-20 px-4 cultural-bg">
-        <div class="max-w-4xl mx-auto">
-            <h2 class="text-center mb-4">Beyond Tech</h2>
-            <p class="text-xl text-center text-pale-sand opacity-90 mb-12 max-w-2xl mx-auto">
-                My work lives at the intersection of movement, music, and community. 
-                I design experiences that bring people together through dance, digital art, 
-                and shared creative spaces that uplift Black expression and joy.
-            </p>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="cultural-card">
-                    <h3 class="text-gold-crown mb-4">The Show (Coming Soon)</h3>
-                    <p class="text-pale-sand opacity-90">
-                        A dance-driven, Soul-Train-inspired experience built around self-expression, 
-                        discovery, and the village. Includes local dancers, DJs, choreography, games, 
-                        and fast-paced music challenges with bold, metaverse-style visuals.
-                    </p>
-                </div>
-
-                <div class="cultural-card">
-                    <h3 class="text-gold-crown mb-4">Digital + Cultural Experiments</h3>
-                    <p class="text-pale-sand opacity-90">
-                        Interactive visuals, motion graphics, audio-reactive art, and mixed-reality 
-                        concepts connected to asiaLAKAY Studios, The Signal, and creative world-building 
-                        projects like Chat & Chaos.
-                    </p>
-                </div>
-            </div>
-
-            <div class="cultural-card mt-8 text-center">
-                <h3 class="text-gold-crown mb-4">Why It Matters</h3>
-                <p class="text-pale-sand opacity-90 text-lg">
-                    Creativity is fuel. Movement, rhythm, and joy are forms of survival and 
-                    collective resilience in a world that feels increasingly heavy.
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 px-4">
-        <div class="max-w-2xl mx-auto text-center">
-            <h2 class="mb-6">Get In Touch / Collaborate</h2>
-            
-            <p class="text-xl text-pale-sand opacity-90 mb-8 leading-relaxed">
-                If you want to build with me — whether it's tech, storytelling, dance, music, 
-                or community work — let's talk. I collaborate with creatives, engineers, DJs, 
-                youth organizers, and anyone shaping the future with intention.
-            </p>
-
-            <a 
-                href="REPLACE_WITH_GOOGLE_FORM_URL" 
-                class="btn-primary text-lg px-8 py-4"
-            >
-                Build with me
-            </a>
-
-            <!-- Cultural Footer -->
-            <div class="mt-16 pt-8 border-t border-matte-navy">
-                <p class="text-pale-sand opacity-70">
-                    Building at the intersection of technology and culture • 
-                    <span style="color: var(--gold-crown)"> Black creativity</span> • 
-                    <span style="color: var(--deep-teal)"> Community power</span>
-                </p>
-            </div>
-        </div>
-    </section>
+                <button type="submit" class="cyber-button">Initiate Transmission</button>
+            </form>
+        </section>
+    </div>
 
     <script>
-        // Simple smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX + 'px';
+                cursorFollower.style.top = e.clientY + 'px';
+            }, 100);
         });
 
-        // Add loading animation
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate cards on scroll
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
+        // Matrix Rain
+        const matrixCanvas = document.getElementById('matrix');
+        const matrixCtx = matrixCanvas.getContext('2d');
 
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+
+        const chars = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const charArray = chars.split('');
+        const fontSize = 14;
+        const columns = matrixCanvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            matrixCtx.fillStyle = 'rgba(10, 10, 15, 0.04)';
+            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            
+            matrixCtx.fillStyle = '#0f0';
+            matrixCtx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                matrixCtx.fillStyle = `hsl(${Math.random() * 120 + 120}, 100%, ${Math.random() * 30 + 50}%)`;
+                matrixCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Three.js Scene - Quantum Data Field
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+        // Create quantum data particles
+        const particleCount = 5000;
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 100;
+            positions[i + 1] = (Math.random() - 0.5) * 100;
+            positions[i + 2] = (Math.random() - 0.5) * 100;
+
+            colors[i] = Math.random();
+            colors[i + 1] = Math.random();
+            colors[i + 2] = Math.random();
+        }
+
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const particleMaterial = new THREE.PointsMaterial({
+            size: 0.1,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const particleSystem = new THREE.Points(particles, particleMaterial);
+        scene.add(particleSystem);
+
+        // Add energy beams
+        const beamGeometry = new THREE.CylinderGeometry(0.05, 0.05, 20, 8);
+        const beamMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x00f3ff,
+            transparent: true,
+            opacity: 0.6
+        });
+
+        const beams = [];
+        for (let i = 0; i < 20; i++) {
+            const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+            beam.position.x = (Math.random() - 0.5) * 50;
+            beam.position.y = (Math.random() - 0.5) * 50;
+            beam.position.z = (Math.random() - 0.5) * 50;
+            beam.rotation.x = Math.random() * Math.PI;
+            beam.rotation.y = Math.random() * Math.PI;
+            scene.add(beam);
+            beams.push(beam);
+        }
+
+        camera.position.z = 30;
+
+        // Neural Network with p5.js
+        function setup() {
+            const neuralCanvas = createCanvas(windowWidth, windowHeight);
+            neuralCanvas.parent('neural-network');
+            colorMode(HSB, 360, 100, 100, 100);
+        }
+
+        class Node {
+            constructor() {
+                this.x = random(width);
+                this.y = random(height);
+                this.vx = random(-0.5, 0.5);
+                this.vy = random(-0.5, 0.5);
+                this.connections = [];
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            
+            connect(other) {
+                stroke(200, 80, 80, 30);
+                strokeWeight(1);
+                line(this.x, this.y, other.x, other.y);
+            }
+        }
+
+        let nodes = [];
+
+        function draw() {
+            clear();
+            
+            if (frameCount % 100 === 0 && nodes.length < 50) {
+                nodes.push(new Node());
+            }
+            
+            for (let node of nodes) {
+                node.update();
+                
+                for (let other of nodes) {
+                    let d = dist(node.x, node.y, other.x, other.y);
+                    if (d < 150 && node !== other) {
+                        node.connect(other);
                     }
-                });
-            }, observerOptions);
+                }
+                
+                fill(200, 100, 100, 50);
+                noStroke();
+                ellipse(node.x, node.y, 4);
+            }
+            
+            // Interactive pulse from mouse
+            for (let node of nodes) {
+                let d = dist(mouseX, mouseY, node.x, node.y);
+                if (d < 100) {
+                    stroke(180, 100, 100, map(d, 0, 100, 80, 0));
+                    strokeWeight(2);
+                    line(mouseX, mouseY, node.x, node.y);
+                    
+                    let force = map(d, 0, 100, 2, 0);
+                    let angle = atan2(node.y - mouseY, node.x - mouseX);
+                    node.vx += cos(angle) * force * 0.1;
+                    node.vy += sin(angle) * force * 0.1;
+                }
+            }
+        }
 
-            // Observe all cultural cards
-            document.querySelectorAll('.cultural-card').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(card);
+        // Animation loop for Three.js
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate particle system
+            particleSystem.rotation.x += 0.001;
+            particleSystem.rotation.y += 0.002;
+
+            // Animate beams
+            beams.forEach(beam => {
+                beam.rotation.x += 0.01;
+                beam.rotation.y += 0.005;
+                beam.position.y = Math.sin(Date.now() * 0.001 + beam.position.x) * 10;
+            });
+
+            // Camera movement based on mouse
+            camera.position.x += (mouseX / window.innerWidth - 0.5) * 0.1;
+            camera.position.y += (-mouseY / window.innerHeight + 0.5) * 0.1;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        function windowResized() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            
+            resizeCanvas(window.innerWidth, window.innerHeight);
+        }
+
+        window.addEventListener('resize', windowResized);
+
+        // Glitch effect on scroll
+        window.addEventListener('scroll', () => {
+            const glitch = document.querySelector('.glitch');
+            if (Math.random() > 0.7) {
+                glitch.style.animation = 'none';
+                setTimeout(() => {
+                    glitch.style.animation = 'glitch 2s infinite';
+                }, 100);
+            }
+        });
+
+        // Cyber button effects
+        document.querySelectorAll('.cyber-button').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.style.animation = 'glitch 0.3s';
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                button.style.animation = 'none';
             });
         });
     </script>
