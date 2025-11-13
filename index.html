@@ -1,1 +1,705 @@
-init
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASIA LAKAY -- Creative Technologist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.min.js"></script>
+    <style>
+        :root {
+            --neon-primary: #00f3ff;
+            --neon-secondary: #ff00c8;
+            --neon-accent: #00ff9d;
+            --dark-bg: #0a0a0f;
+            --darker-bg: #050508;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Mono', 'JetBrains Mono', monospace;
+            background: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        .glitch {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 
+                0.05em 0 0 var(--neon-primary),
+                -0.05em -0.025em 0 var(--neon-secondary),
+                -0.025em 0.05em 0 var(--neon-accent);
+            animation: glitch 2s infinite;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            animation: glitch-1 0.5s infinite;
+            clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+            opacity: 0.8;
+        }
+
+        .glitch::after {
+            animation: glitch-2 0.5s infinite;
+            clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+            opacity: 0.8;
+        }
+
+        @keyframes glitch {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% {
+                text-shadow: 
+                    0.05em 0 0 var(--neon-primary),
+                    -0.05em -0.025em 0 var(--neon-secondary),
+                    -0.025em 0.05em 0 var(--neon-accent);
+            }
+            15%, 49% {
+                text-shadow: 
+                    -0.05em -0.025em 0 var(--neon-primary),
+                    0.025em 0.025em 0 var(--neon-secondary),
+                    -0.05em -0.05em 0 var(--neon-accent);
+            }
+            50%, 99% {
+                text-shadow: 
+                    0.025em 0.05em 0 var(--neon-primary),
+                    0.05em 0 0 var(--neon-secondary),
+                    0 -0.05em 0 var(--neon-accent);
+            }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            margin: 2rem 0;
+            opacity: 0.8;
+            position: relative;
+        }
+
+        .tagline::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-primary), transparent);
+        }
+
+        /* Holographic Sections */
+        section {
+            position: relative;
+            margin: 10rem 0;
+            padding: 4rem 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 243, 255, 0.1);
+            border-radius: 0;
+            clip-path: polygon(
+                0 0, calc(100% - 40px) 0, 100% 40px,
+                100% 100%, 40px 100%, 0 calc(100% - 40px)
+            );
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(0, 243, 255, 0.1) 50%,
+                transparent 100%
+            );
+            z-index: -1;
+            animation: hologram 4s infinite;
+        }
+
+        @keyframes hologram {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
+        }
+
+        /* Cyber Grid */
+        .cyber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .cyber-card {
+            background: rgba(10, 10, 20, 0.8);
+            padding: 2rem;
+            border: 1px solid var(--neon-primary);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-primary), var(--neon-secondary), var(--neon-accent));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cyber-card:hover::before {
+            opacity: 1;
+        }
+
+        .cyber-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 0 20px var(--neon-primary),
+                0 0 40px var(--neon-secondary);
+        }
+
+        /* Terminal Style Lists */
+        .terminal-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .terminal-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .terminal-list li::before {
+            content: '>';
+            position: absolute;
+            left: 0;
+            color: var(--neon-accent);
+            font-weight: bold;
+        }
+
+        /* Contact Form */
+        .contact-form {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .cyber-input {
+            width: 100%;
+            padding: 1rem;
+            background: transparent;
+            border: 1px solid var(--neon-primary);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            box-shadow: 0 0 20px var(--neon-primary);
+        }
+
+        .cyber-button {
+            background: transparent;
+            border: 2px solid var(--neon-primary);
+            color: var(--neon-primary);
+            padding: 1rem 2rem;
+            font-family: inherit;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            background: var(--neon-primary);
+            color: var(--dark-bg);
+            box-shadow: 0 0 30px var(--neon-primary);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Three.js Canvas */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Matrix Rain */
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Neural Network */
+        #neural-network {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            section {
+                margin: 5rem 0;
+                padding: 2rem 1rem;
+            }
+            
+            .cyber-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Three.js Canvas -->
+    <div id="three-canvas"></div>
+
+    <!-- Matrix Rain -->
+    <canvas id="matrix"></canvas>
+
+    <!-- Neural Network -->
+    <div id="neural-network"></div>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <h1 class="glitch" data-text="ASIA LAKAY">ASIA LAKAY</h1>
+                <p class="tagline">Creative Technologist • AI Systems Builder • Digital Architect</p>
+                <div class="cyber-button">Initiate Connection</div>
+            </div>
+        </header>
+
+        <!-- What I Build -->
+        <section id="capabilities">
+            <h2>System Capabilities</h2>
+            <div class="cyber-grid">
+                <div class="cyber-card">
+                    <h3>Neural Networks</h3>
+                    <ul class="terminal-list">
+                        <li>AI Agent Architectures</li>
+                        <li>Machine Learning Pipelines</li>
+                        <li>Predictive Systems</li>
+                        <li>Automation Clusters</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3>Digital Ecosystems</h3>
+                    <ul class="terminal-list">
+                        <li>Cloudflare Edge Networks</li>
+                        <li>Distributed Systems</li>
+                        <li>API Mesh Architectures</li>
+                        <li>Progressive Web Apps</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3>Creative Systems</h3>
+                    <ul class="terminal-list">
+                        <li>Generative Interfaces</li>
+                        <li>Interactive Experiences</li>
+                        <li>Brand Ecosystems</li>
+                        <li>Digital Narratives</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects -->
+        <section id="operations">
+            <h2>Active Operations</h2>
+            <div class="cyber-grid">
+                <div class="cyber-card">
+                    <h3>Project: DEEDS</h3>
+                    <p>Full-stack platform on Cloudflare Edge. Real-time data synchronization across global network nodes.</p>
+                    <div class="status">STATUS: OPERATIONAL</div>
+                </div>
+                <div class="cyber-card">
+                    <h3>Project: ARKHAM</h3>
+                    <p>Rapid-cycle MVP architecture. 10-day deployment cycles with automated CI/CD pipelines.</p>
+                    <div class="status">STATUS: ITERATING</div>
+                </div>
+                <div class="cyber-card">
+                    <h3>Project: NEXUS</h3>
+                    <p>AI research assistant with legal data parsing. Autonomous analysis and summarization protocols.</p>
+                    <div class="status">STATUS: BETA</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact">
+            <h2>Establish Connection</h2>
+            <form class="contact-form">
+                <div class="input-group">
+                    <input type="text" class="cyber-input" placeholder="IDENTIFICATION" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" class="cyber-input" placeholder="COMMUNICATION PROTOCOL" required>
+                </div>
+                <div class="input-group">
+                    <textarea class="cyber-input" rows="5" placeholder="MISSION PARAMETERS" required></textarea>
+                </div>
+                <button type="submit" class="cyber-button">Initiate Transmission</button>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                cursorFollower.style.left = e.clientX + 'px';
+                cursorFollower.style.top = e.clientY + 'px';
+            }, 100);
+        });
+
+        // Matrix Rain
+        const matrixCanvas = document.getElementById('matrix');
+        const matrixCtx = matrixCanvas.getContext('2d');
+
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+
+        const chars = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const charArray = chars.split('');
+        const fontSize = 14;
+        const columns = matrixCanvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrix() {
+            matrixCtx.fillStyle = 'rgba(10, 10, 15, 0.04)';
+            matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+            
+            matrixCtx.fillStyle = '#0f0';
+            matrixCtx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                matrixCtx.fillStyle = `hsl(${Math.random() * 120 + 120}, 100%, ${Math.random() * 30 + 50}%)`;
+                matrixCtx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Three.js Scene - Quantum Data Field
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('three-canvas').appendChild(renderer.domElement);
+
+        // Create quantum data particles
+        const particleCount = 5000;
+        const particles = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const colors = new Float32Array(particleCount * 3);
+
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 100;
+            positions[i + 1] = (Math.random() - 0.5) * 100;
+            positions[i + 2] = (Math.random() - 0.5) * 100;
+
+            colors[i] = Math.random();
+            colors[i + 1] = Math.random();
+            colors[i + 2] = Math.random();
+        }
+
+        particles.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        particles.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+        const particleMaterial = new THREE.PointsMaterial({
+            size: 0.1,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.8
+        });
+
+        const particleSystem = new THREE.Points(particles, particleMaterial);
+        scene.add(particleSystem);
+
+        // Add energy beams
+        const beamGeometry = new THREE.CylinderGeometry(0.05, 0.05, 20, 8);
+        const beamMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0x00f3ff,
+            transparent: true,
+            opacity: 0.6
+        });
+
+        const beams = [];
+        for (let i = 0; i < 20; i++) {
+            const beam = new THREE.Mesh(beamGeometry, beamMaterial);
+            beam.position.x = (Math.random() - 0.5) * 50;
+            beam.position.y = (Math.random() - 0.5) * 50;
+            beam.position.z = (Math.random() - 0.5) * 50;
+            beam.rotation.x = Math.random() * Math.PI;
+            beam.rotation.y = Math.random() * Math.PI;
+            scene.add(beam);
+            beams.push(beam);
+        }
+
+        camera.position.z = 30;
+
+        // Neural Network with p5.js
+        function setup() {
+            const neuralCanvas = createCanvas(windowWidth, windowHeight);
+            neuralCanvas.parent('neural-network');
+            colorMode(HSB, 360, 100, 100, 100);
+        }
+
+        class Node {
+            constructor() {
+                this.x = random(width);
+                this.y = random(height);
+                this.vx = random(-0.5, 0.5);
+                this.vy = random(-0.5, 0.5);
+                this.connections = [];
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            
+            connect(other) {
+                stroke(200, 80, 80, 30);
+                strokeWeight(1);
+                line(this.x, this.y, other.x, other.y);
+            }
+        }
+
+        let nodes = [];
+
+        function draw() {
+            clear();
+            
+            if (frameCount % 100 === 0 && nodes.length < 50) {
+                nodes.push(new Node());
+            }
+            
+            for (let node of nodes) {
+                node.update();
+                
+                for (let other of nodes) {
+                    let d = dist(node.x, node.y, other.x, other.y);
+                    if (d < 150 && node !== other) {
+                        node.connect(other);
+                    }
+                }
+                
+                fill(200, 100, 100, 50);
+                noStroke();
+                ellipse(node.x, node.y, 4);
+            }
+            
+            // Interactive pulse from mouse
+            for (let node of nodes) {
+                let d = dist(mouseX, mouseY, node.x, node.y);
+                if (d < 100) {
+                    stroke(180, 100, 100, map(d, 0, 100, 80, 0));
+                    strokeWeight(2);
+                    line(mouseX, mouseY, node.x, node.y);
+                    
+                    let force = map(d, 0, 100, 2, 0);
+                    let angle = atan2(node.y - mouseY, node.x - mouseX);
+                    node.vx += cos(angle) * force * 0.1;
+                    node.vy += sin(angle) * force * 0.1;
+                }
+            }
+        }
+
+        // Animation loop for Three.js
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate particle system
+            particleSystem.rotation.x += 0.001;
+            particleSystem.rotation.y += 0.002;
+
+            // Animate beams
+            beams.forEach(beam => {
+                beam.rotation.x += 0.01;
+                beam.rotation.y += 0.005;
+                beam.position.y = Math.sin(Date.now() * 0.001 + beam.position.x) * 10;
+            });
+
+            // Camera movement based on mouse
+            camera.position.x += (mouseX / window.innerWidth - 0.5) * 0.1;
+            camera.position.y += (-mouseY / window.innerHeight + 0.5) * 0.1;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Handle window resize
+        function windowResized() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+            
+            resizeCanvas(window.innerWidth, window.innerHeight);
+        }
+
+        window.addEventListener('resize', windowResized);
+
+        // Glitch effect on scroll
+        window.addEventListener('scroll', () => {
+            const glitch = document.querySelector('.glitch');
+            if (Math.random() > 0.7) {
+                glitch.style.animation = 'none';
+                setTimeout(() => {
+                    glitch.style.animation = 'glitch 2s infinite';
+                }, 100);
+            }
+        });
+
+        // Cyber button effects
+        document.querySelectorAll('.cyber-button').forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.style.animation = 'glitch 0.3s';
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                button.style.animation = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
